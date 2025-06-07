@@ -1,0 +1,6 @@
+range:
+  - start: 65
+    end: 91   # A-Z (chr(65) = "A", chr(90) = "Z")
+  - start: 97
+    end: 123  # a-z (chr(97) = "a", chr(122) = "z")
+

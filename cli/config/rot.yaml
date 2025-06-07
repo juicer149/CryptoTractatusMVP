@@ -1,0 +1,13 @@
+common: &common_flags
+  - name: "--shift"
+    type: int
+    required: true
+  - name: "--alphabet"
+    type: str
+  - name: "--lang"
+    type: str
+
+encrypt: *common_flags
+decrypt: *common_flags
+analyze: []
+

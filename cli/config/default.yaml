@@ -1,0 +1,4 @@
+# Default configuration for the application
+lang: "en"
+fast_mode: true
+
