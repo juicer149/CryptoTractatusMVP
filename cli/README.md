@@ -1,8 +1,8 @@
 # CryptoTractatus – CLI Architecture
 
-This directory contains the modular, extensible command-line interface (CLI) for CryptoTractatus – a toolkit for classical cryptography.
+This directory contains the modular, extensible command-line interface (CLI) for CryptoTractatus — a toolkit for classical cryptography.
 
-The CLI is designed for composability, configurability, and minimalism. Logic is separated from configuration and new ciphers or operations can be added rapidly via YAML and Python modules.
+The CLI is designed for composability, configurability, and minimalism. Logic is separated from configuration, and new ciphers or operations can be added rapidly via YAML and Python modules.
 
 ---
 
@@ -10,7 +10,7 @@ The CLI is designed for composability, configurability, and minimalism. Logic is
 
 | File/Dir             | Purpose                                                                 |
 |----------------------|-------------------------------------------------------------------------|
-| `main.py`            | CLI entrypoint – parses args and dispatches execution                   |
+| `main.py`            | CLI entrypoint — parses args and dispatches execution                   |
 | `parser.py`          | Builds the argument parser from YAML config files                       |
 | `dispatch.py`        | Routes execution to appropriate handlers based on parsed arguments      |
 | `registry.py`        | Decorator-based command registration mechanism                          |
@@ -57,22 +57,22 @@ Example flow:
 [?] Vilken cipher?:
  > rot
 
-[?] Shift (t.ex. 3): 1
+[?] Shift (e.g., 3): 1
 [?] Text att transformera: a b c
 [?] Språk (default: en): en
 
 Resultat: b c d
 ```
 
-- **Shift** frågas direkt efter cipher-valet.
-- Mellanslag och skiljetecken lämnas orörda vid kryptering/dekryptering.
-- Endast bokstäver påverkas av ROT-cipher.
+- **Shift** is prompted directly after the cipher is selected.
+- Spaces and punctuation are left unchanged during encryption/decryption.
+- Only letters are affected by the ROT cipher.
 
 ---
 
 ## Handling of Spaces and Punctuation
 
-By default, only letters (`A-Z`, `a-z`) are included in alphabets for classical ciphers.  
+By default, only letters (`A-Z`, `a-z` — or their equivalents in the chosen alphabet) are included in the working alphabet for classical ciphers.
 Other characters (spaces, punctuation, numbers) are **left unchanged** during transformation.
 
 If you want to customize which characters are included/ignored, edit your alphabet YAML under `language/alphabets/`.
@@ -85,7 +85,7 @@ To add a new cipher:
 
 1. **YAML Config**
    - Create a file like `vigenere.yaml` in the `config/` folder.
-   - Define flags per operation (e.g. `encrypt`, `decrypt`).
+   - Define flags per operation (e.g., `encrypt`, `decrypt`).
 
    Example:
    ```yaml
@@ -108,7 +108,7 @@ To add a new cipher:
    - Register handlers with `@register_command("encrypt", "vigenere")` etc.
    - Use helpers for argument parsing and cipher instantiation.
 
-3. **No Core Changes Needed** – parser, dispatch, and registry auto-discover ciphers.
+3. **No Core Changes Needed** — parser, dispatch, and registry auto-discover ciphers.
 
 ---
 
@@ -135,7 +135,7 @@ analyze: []
 
 - Parsers are constructed dynamically from YAML
 - Registry maps `(operation, cipher)` → handler function
-- All text is treated as a list of characters before passed to the cipher core
+- All text is treated as a list of characters before passing to the cipher core
 - Interactive mode adapts questions per cipher choice
 
 ---

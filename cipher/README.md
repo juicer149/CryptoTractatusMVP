@@ -1,31 +1,35 @@
-# CryptoTractatus – Cipher Core
+# CryptoTractatus — Cipher Core
 
-This module contains the cryptographic core components of **CryptoTractatus** — a framework for classical cipher experimentation and analysis.
+This directory contains the cryptographic core of **CryptoTractatus**, a framework for experimenting with and analyzing classical ciphers.
 
 ---
 
 ## Design Principles
 
-- **Composable**: All ciphers inherit from a common base (`CipherBit`).
-- **Minimal**: No external dependencies beyond Python stdlib.
-- **Purity**: Most functions are deterministic and side-effect-free.
-- **Fallbacks**: Fast path support (e.g., `rot_text`) for performance-critical use cases.
+- **Composable**: All ciphers subclass a common base (`CipherBit`).
+- **Minimal**: Only Python's standard library is required.
+- **Pure**: Functions are deterministic and avoid side effects.
+- **Performance**: Optional "fast path" support for speed-critical operations.
 
 ---
 
-## Module Overview
+## Module Structure
 
-| File             | Description                                                              |
-|------------------|--------------------------------------------------------------------------|
-| `base.py`        | Abstract base class for all ciphers (`CipherBit`)                        |
-| `rot.py`         | Implementation of ROT (Caesar) cipher                                     |
-| `charmap.py`     | Character mapping utility used by many substitution-based ciphers         |
+| File                | Description                                                        |
+|---------------------|--------------------------------------------------------------------|
+| `base.py`           | Abstract base class for ciphers (`CipherBit`)                      |
+| `charmap.py`        | Deterministic character mapping utility (substitution ciphers)      |
+| `charmap_table.py`  | Table for polyalphabetic or keyed substitution systems             |
+| `interfaces.py`     | Cipher table interface abstraction                                 |
+| `monoalphabetic.py` | Monoalphabetic cipher implementation                               |
+| `transformer.py`    | Pipeline for chaining multiple ciphers                             |
+| `vigenere.py`       | Vigenère cipher implementation                                     |
 
 ---
 
 ## Base Class: `CipherBit`
 
-All ciphers must subclass `CipherBit`:
+All ciphers subclass `CipherBit`, which standardizes the interface for encryption and decryption:
 
 ```python
 @dataclass
@@ -39,57 +43,68 @@ class CipherBit(ABC):
     def decrypt(self) -> List[str]
 ```
 
-The `__call__` method dispatches based on mode (`encrypt` or `decrypt`).
+- The `__call__` method dispatches to `encrypt` or `decrypt` based on the given mode.
+- Subclasses must implement `encrypt()` and `decrypt()`.
 
 ---
 
 ## Utility: `CharMap`
 
-The `CharMap` class offers deterministic character substitution with fallbacks. It supports:
+`CharMap` provides deterministic character substitution with fallbacks.
 
-- `CharMap.from_lists(keys, values)`: simple 1:1 mapping
-- `CharMap.from_generator(...)`: for polyalphabetic systems like Vigenère
-- Callable usage: `mapping(['A', 'B', 'C'])`
+- `CharMap.from_lists(keys, values)`: create a 1:1 mapping.
+- `CharMap.from_generator(...)`: create mappings for polyalphabetic systems (e.g., Vigenère).
+- Callable: `mapping(['A', 'B', 'C'])` applies the mapping.
 
 ---
 
 ## Example: Creating a New Cipher
 
-1. **Create a new file** in `cipher/`, e.g. `vigenere.py`
-2. **Inherit from** `CipherBit`
-3. **Implement** `encrypt()` and `decrypt()` using `CharMap`, `rotate`, or your own logic
+To add a new cipher:
+
+1. **Create a new file** in `cipher/`, for example `mycipher.py`.
+2. **Inherit from** `CipherBit`.
+3. **Implement** `encrypt()` and `decrypt()`.
 
 ```python
 @dataclass(kw_only=True)
-class VigenereCipher(CipherBit):
-    keyword: str
+class MyCipher(CipherBit):
+    custom_param: str
 
     def encrypt(self) -> List[str]:
-        # implement using self.keyword and self.alphabet
+        # Implement encryption logic
         pass
 
     def decrypt(self) -> List[str]:
-        # implement inverse
+        # Implement decryption logic
         pass
 ```
 
-4. Add optional fast-path support if needed (`self.fast`).
+4. Optionally, add fast-path logic if needed.
 
 ---
 
 ## Integration with CLI
 
-Once the cipher is defined:
-- Register it in `cli/commands/` via `@register_command`
-- Add its config to `cli/config/`
-- No need to touch parser or dispatch logic
+After defining a cipher:
+
+- Register it in `cli/commands/` with `@register_command`.
+- Add its configuration YAML to `cli/config/`.
+- No edits to parser or dispatch logic are needed.
 
 ---
 
 ## Philosophy
 
-This module treats ciphers as **pure transformations** over character sequences. The emphasis is on:
-- **Clarity over cleverness**
-- **Data over control structures**
-- **Reusability via composition**
+Ciphers are treated as **pure transformations** over character sequences.
 
+- **Clarity** over cleverness
+- **Data-centric** design
+- **Composable** abstractions
+
+---
+
+## See Also
+
+- [cli/commands/](../cli/commands/) — Command integration layer
+- [cli/config/](../cli/config/) — Cipher configuration files

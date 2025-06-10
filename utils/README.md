@@ -2,10 +2,10 @@
 
 This directory contains generic utilities used throughout the CryptoTractatus project. The modules are grouped into four key areas:
 
-* **Validation**
-* **Functional tools**
-* **Quick fallback algorithms**
-* **Error handling**
+- **Validation**
+- **Functional tools**
+- **Quick fallback algorithms**
+- **Error handling**
 
 These tools are pure, minimal, and built with Unix-style composability in mind.
 
@@ -20,6 +20,7 @@ These tools are pure, minimal, and built with Unix-style composability in mind.
 | `validators.py` | Precondition checks and value assertions             |
 | `errors.py`     | Custom error classes for internal exception handling |
 | `load.py`       | Minimal I/O functions for YAML and JSON parsing      |
+| `alphabet_loader.py` | Robust alphabet loading from YAML or language   |
 
 ---
 
@@ -60,16 +61,16 @@ ensure_not_empty([])       # Raises EmptySequenceError
 
 These modules are intended to remain low-level and side-effect free:
 
-* Do **not** introduce cipher-specific logic here
-* Prefer list/iterable interfaces
-* Raise **custom errors**, never built-ins
+- Do **not** introduce cipher-specific logic here
+- Prefer list/iterable interfaces
+- Raise **custom errors**, never built-ins
 
 If you want to add new validators or helpers, follow these guidelines:
 
-* **tools.py** – Only pure transformations (e.g., strip accents, remove symbols)
-* **validators.py** – Always raise `CryptoTractatusError` subclasses
-* **quick.py** – Stateless cipher fallbacks (no classes, just functions)
-* **load.py** – Only load/save logic (no interpretation or transformation)
+- **tools.py** – Only pure transformations (e.g., strip accents, remove symbols)
+- **validators.py** – Always raise `CryptoTractatusError` subclasses
+- **quick.py** – Stateless cipher fallbacks (no classes, just functions)
+- **load.py** – Only load/save logic (no interpretation or transformation)
 
 ---
 
@@ -90,10 +91,10 @@ Use these to provide better internal traceability:
 
 The `utils/` layer embodies the philosophy of CryptoTractatus:
 
-* Keep abstractions minimal
-* Code should be testable without mocks or side effects
-* Let high-level systems orchestrate behavior, not helpers
-* Avoid assumptions or implicit defaults
+- Keep abstractions minimal
+- Code should be testable without mocks or side effects
+- Let high-level systems orchestrate behavior, not helpers
+- Avoid assumptions or implicit defaults
 
 This allows you to build robust crypto primitives and command-line tools atop a stable, predictable foundation.
 

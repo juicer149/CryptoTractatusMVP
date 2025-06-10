@@ -1,80 +1,100 @@
-# Language Module – Unicode Alphabet Tools
+# `utils/` – Utility Modules for CryptoTractatus
 
-This module provides language-specific Unicode alphabets for use in classical ciphers.
-It supports loading, generation, and fallbacks for A–Z and custom characters (e.g., ÅÄÖ).
+This directory contains generic utilities used throughout the CryptoTractatus project. The modules are grouped into four key areas:
 
----
+- **Validation**
+- **Functional tools**
+- **Quick fallback algorithms**
+- **Error handling**
 
-## Structure
-
-```
-language/
-├── tools.py       # Core logic for alphabet loading and generation
-└── alphabets/     # YAML alphabet definitions (e.g., en.yaml, sv.yaml)
-```
+These tools are pure, minimal, and built with Unix-style composability in mind.
 
 ---
 
-## Functions
+## Overview
 
-### `load_unicode_alphabet(lang: str = "en") -> List[str]`
+| File            | Purpose                                              |
+| --------------- | ---------------------------------------------------- |
+| `tools.py`      | Pure sequence transformations (e.g. rotate, dedupe)  |
+| `quick.py`      | Optimized one-shot utilities (e.g. Caesar fallback)  |
+| `validators.py` | Precondition checks and value assertions             |
+| `errors.py`     | Custom error classes for internal exception handling |
+| `load.py`       | Minimal I/O functions for YAML and JSON parsing      |
+| `alphabet_loader.py` | Robust alphabet loading from YAML or language   |
 
-Loads a YAML alphabet given a language code.
+---
 
-- If no file exists, falls back to A–Z.
-- Supports:
-  - Unicode ranges (start, end)
-  - Extras (custom characters like å, ä, ö)
+## Usage Examples
 
-### `generate_unicode_yaml(name: str, start: int, end: int, extras: List[str] = None, out_dir: Path = ALPHABET_DIR)`
+### Rotation Logic (Pure)
 
-Creates a YAML file in `alphabets/` for a given language.
-
-Usage example:
 ```python
-generate_unicode_yaml("sv", 65, 91, extras=["Å", "Ä", "Ö"])
+from utils.tools import rotate
+rotate("ABCDEF", -2)  # ["C", "D", "E", "F", "A", "B"]
 ```
 
-Output:
-```yaml
-range:
-  start: 65
-  end: 91
-  name: sv
-extras:
-  Å: 197
-  Ä: 196
-  Ö: 214
-```
+### Fallback Caesar Encrypt
 
-### `basic_unicode_latin() -> List[str]`
-
-Returns default uppercase Latin alphabet: A–Z.
-
----
-
-## How to Add New Alphabets
-
-1. Use `generate_unicode_yaml()` in Python shell or script:
 ```python
-from language.tools import generate_unicode_yaml
-
-generate_unicode_yaml("el", 913, 938)  # Greek uppercase
+from utils.quick import rot_text
+rot_text("HELLO", 3, lang="en")  # "KHOOR"
 ```
 
-2. Alphabet becomes accessible via:
+### Load Config
+
 ```python
-load_unicode_alphabet("el")
+from utils.load import load_yaml
+config = load_yaml(Path("config/rot.yaml"))
+```
+
+### Ensure Non-Empty Input
+
+```python
+from utils.validators import ensure_not_empty
+ensure_not_empty([1,2,3])  # OK
+ensure_not_empty([])       # Raises EmptySequenceError
 ```
 
 ---
 
-## Design Principles
+## Extending
 
-- YAML-based declarative alphabets
-- Unicode-safe and language-agnostic
-- Extendable via CLI or code
-- Separation of data (YAML) and logic (Python)
+These modules are intended to remain low-level and side-effect free:
 
-This module is central to how CryptoTractatus adapts to multilingual contexts and user-defined ciphers.
+- Do **not** introduce cipher-specific logic here
+- Prefer list/iterable interfaces
+- Raise **custom errors**, never built-ins
+
+If you want to add new validators or helpers, follow these guidelines:
+
+- **tools.py** – Only pure transformations (e.g., strip accents, remove symbols)
+- **validators.py** – Always raise `CryptoTractatusError` subclasses
+- **quick.py** – Stateless cipher fallbacks (no classes, just functions)
+- **load.py** – Only load/save logic (no interpretation or transformation)
+
+---
+
+## Error Classes
+
+Use these to provide better internal traceability:
+
+| Error Class                  | Raised When                                    |
+| ---------------------------- | ---------------------------------------------- |
+| `CryptoTractatusError`       | Base class for all internal errors             |
+| `EmptySequenceError`         | Sequence operation is called on an empty input |
+| `MappingLengthMismatchError` | Two lists to be zipped differ in length        |
+| `UnknownCommandError`        | CLI dispatch fails to find a matching command  |
+
+---
+
+## Philosophy
+
+The `utils/` layer embodies the philosophy of CryptoTractatus:
+
+- Keep abstractions minimal
+- Code should be testable without mocks or side effects
+- Let high-level systems orchestrate behavior, not helpers
+- Avoid assumptions or implicit defaults
+
+This allows you to build robust crypto primitives and command-line tools atop a stable, predictable foundation.
 
