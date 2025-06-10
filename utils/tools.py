@@ -9,9 +9,10 @@ All functions in this module are:
 - Do not raise exceptions for common input variants (e.g. empty iterables)
 """
 
-from typing import Any, Dict, List, Union, Sequence 
-import warnings
+from typing import List, Set, Tuple, Any, Dict, Union, Sequence 
 from collections.abc import Iterable
+import string
+import warnings
 
 
 def rotate(sequence: Iterable[str], shift: int) -> list[str]:
@@ -70,6 +71,53 @@ def remove_duplicates(sequence: Iterable[str]) -> list[str]:
     return list(dict.fromkeys(sequence)) # Uses dict.fromkeys to make use of CPython's order-preserving nature of dictionaries.
 
 
+def filter_allowed_chars(
+    sequence: Iterable[str],
+    allowed_chars: Set[str],
+    case: str = "upper"
+) -> List[str]:
+    """
+    Returns only the characters from sequence that exist in allowed_chars.
+    Converts to uppercase (default) or lowercase before checking, depending on the 'case' argument.
+    """
+    canon = str.upper if case == "upper" else str.lower
+    allowed = {canon(c) for c in allowed_chars}
+    return [canon(c) for c in sequence if canon(c) in allowed]
+
+
+def get_ascii_alphabet() -> List[str]:
+    """
+    Return a hardcoded ASCII uppercase alphabet. Used as the ultimate fallback.
+    """
+    return list(string.ascii_uppercase)
+
+
+def from_ascii_range(start: int, end: int) -> List[str]:
+    """
+    Generate characters from a single ASCII range.
+    """
+    if start > end:
+        raise ValueError("Start must be <= end.")
+    return [chr(c) for c in range(start, end + 1)]
+
+
+def from_unicode_ranges(ranges: List[Tuple[int, int]]) -> List[str]:
+    """
+    Generate characters from one or more Unicode ranges.
+    Example: [(65, 90), (196, 214)] => A-Z + ÄÖ
+    """
+    chars = []
+    for start, end in ranges:
+        chars.extend(chr(c) for c in range(start, end + 1))
+    return chars
+
+
+def with_extras(base: List[str], extras: List[str]) -> List[str]:
+    """
+    Extend base alphabet with additional characters, avoiding duplicates.
+    """
+    seen = set(base)
+    return base + [c for c in extras if c not in seen]
 
 
 def zip_to_dict(
