@@ -1,0 +1,11 @@
+common: &common_flags
+  - name: "--key_char"
+    type: str
+    required: true
+  - name: "--alphabet"
+    type: str
+  - name: "--lang"
+    type: str
+
+encrypt: *common_flags
+decrypt: *common_flags

@@ -1,5 +1,3 @@
-# cli/registry.py
-
 """
 Registry and decorator for mapping CLI operations and ciphers to their handler functions.
 """
@@ -21,4 +19,3 @@ def register_command(operation, cipher):
         COMMAND_REGISTRY.setdefault(operation, {})[cipher] = fn
         return fn
     return decorator
-
