@@ -1,0 +1,17 @@
+range:
+  - start: 65
+    end: 91    # A-Z
+  - start: 196
+    end: 197   # Ä
+  - start: 197
+    end: 198   # Å
+  - start: 214
+    end: 215   # Ö
+  - start: 97
+    end: 123   # a-z
+  - start: 228
+    end: 229   # ä
+  - start: 229
+    end: 230   # å
+  - start: 246
+    end: 247   # ö
