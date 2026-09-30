@@ -6,3 +6,4 @@ __pycache__/
 .venv
 .idea/
 .DS_Store
+all_code_and_docs.txt
