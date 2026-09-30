@@ -3,8 +3,9 @@ from typing import List
 
 from cipher.base import CipherBit
 from cipher.interfaces import CipherTable
-from utils.tools import remove_duplicates, filter_allowed_chars
+from utils.tools import filter_allowed_chars
 from utils.validators import ensure_not_empty
+
 
 @dataclass(kw_only=True)
 class Vigenere(CipherBit):
@@ -19,8 +20,9 @@ class Vigenere(CipherBit):
 
     def __post_init__(self):
         super().__post_init__()
-        self.keyword = remove_duplicates(
-            filter_allowed_chars(self.keyword, set(self.table.base_alphabet))
+        self.keyword = filter_allowed_chars(
+            self.keyword,
+            set(self.table.base_alphabet),
         )
         ensure_not_empty(self.keyword, "Keyword must not be empty")
 

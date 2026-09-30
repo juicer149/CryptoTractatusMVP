@@ -1,9 +1,7 @@
 common: &common_flags
-  - name: "--shift"
-    type: int
-    required: true
-  - name: "--alphabet"
+  - name: "--keyword"
     type: str
+    required: true
   - name: "--lang"
     type: str
 

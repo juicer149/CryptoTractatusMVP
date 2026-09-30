@@ -42,7 +42,12 @@ def build_parser():
     operations = parser.add_subparsers(dest="operation", required=True)
     config_dir = Path(__file__).parent / "config"
     cipher_configs = load_all_cipher_configs(config_dir)
-    all_ops = {op for cfg in cipher_configs.values() for op in cfg}
+    all_ops = {
+        op
+        for cfg in cipher_configs.values()
+        for op in cfg
+        if op != "common"
+    }
     for op_name in sorted(all_ops):
         add_operation(operations, op_name, cipher_configs)
     return parser
