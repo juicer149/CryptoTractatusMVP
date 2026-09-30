@@ -96,5 +96,58 @@ class CliTests(unittest.TestCase):
         self.assertEqual(decrypted, "HELLO")
 
 
+class CaseAndSpacingTests(unittest.TestCase):
+    def run_cli(self, *args):
+        result = subprocess.run(
+            [sys.executable, "-m", "cli.main", *args],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        return result.stdout.strip()
+
+    def test_rot_preserves_case_and_punctuation(self):
+        self.assertEqual(
+            self.run_cli(
+                "encrypt", "rot",
+                "--text", "Hello, World",
+                "--shift", "3",
+                "--lang", "en",
+            ),
+            "Khoor, Zruog",
+        )
+
+    def test_vigenere_key_skips_non_letters(self):
+        # Classical textbook example: ATTACK AT DAWN with key LEMON.
+        self.assertEqual(
+            self.run_cli(
+                "encrypt", "vigenere",
+                "--text", "ATTACK AT DAWN",
+                "--keyword", "LEMON",
+                "--lang", "en",
+            ),
+            "LXFOPV EF RNHR",
+        )
+
+    def test_vigenere_round_trip_mixed_case(self):
+        encrypted = self.run_cli(
+            "encrypt", "vigenere",
+            "--text", "Attack at dawn!",
+            "--keyword", "lemon",
+            "--lang", "en",
+        )
+
+        self.assertEqual(encrypted, "Lxfopv ef rnhr!")
+        self.assertEqual(
+            self.run_cli(
+                "decrypt", "vigenere",
+                "--text", encrypted,
+                "--keyword", "lemon",
+                "--lang", "en",
+            ),
+            "Attack at dawn!",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

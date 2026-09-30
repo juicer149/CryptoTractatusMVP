@@ -4,6 +4,24 @@ from dataclasses import dataclass
 
 from utils.validators import ensure_not_empty
 
+
+def substitute(char: str, cmap: dict[str, str]) -> str:
+    """Substitute one character and keep its case.
+
+    Alphabets are uppercase, so lowercase input is looked up in uppercase
+    and lowered again. Characters outside the alphabet pass through.
+    """
+    if char in cmap:
+        return cmap[char]
+
+    upper = char.upper()
+
+    if upper in cmap:
+        return cmap[upper].lower()
+
+    return char
+
+
 @dataclass
 class CipherBit(ABC):
     """

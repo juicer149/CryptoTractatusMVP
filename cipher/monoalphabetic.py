@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 
-from cipher.base import CipherBit
+from cipher.base import CipherBit, substitute
 from cipher.interfaces import CipherTable
 from utils.validators import ensure_not_empty
 
@@ -22,7 +22,7 @@ class MonoalphabeticCipher(CipherBit):
 
     def _transform(self, decrypt: bool) -> List[str]:
         cmap = self.table.get_map(self.key_char, decrypt=decrypt)
-        return [cmap.get(c, c) for c in self.text]
+        return [substitute(c, cmap) for c in self.text]
 
     def encrypt(self) -> List[str]:
         return self._transform(decrypt=False)

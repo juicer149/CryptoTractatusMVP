@@ -10,21 +10,49 @@ It experiments with:
 - reusable cipher components
 - ROT, Caesar-style substitution and Vigenère
 - English and Swedish alphabets
+- case-preserving substitution
+- punctuation-aware text handling
 - composable cipher pipelines
+
+## Installation
+
+```bash
+pip install -r requirements.txt
+```
 
 ## Usage
 
+ROT:
+
 ```bash
 python3 -m cli.main encrypt rot \
-  --text HELLO \
+  --text "Hello, World" \
   --shift 3 \
   --lang en
+```
 
+Output:
+
+```text
+Khoor, Zruog
+```
+
+Vigenère:
+
+```bash
 python3 -m cli.main encrypt vigenere \
-  --text HELLO \
-  --keyword KEY \
+  --text "ATTACK AT DAWN" \
+  --keyword LEMON \
   --lang en
 ```
+
+Output:
+
+```text
+LXFOPV EF RNHR
+```
+
+Lowercase keywords are normalized automatically, and letter case is preserved in the transformed text.
 
 ## Verification
 
@@ -32,7 +60,16 @@ python3 -m cli.main encrypt vigenere \
 make check
 ```
 
-The restored project currently has regression coverage for ROT, Vigenère, repeated-key characters, CLI execution, and English/Swedish alphabets.
+The restored project currently has regression coverage for:
+
+- ROT encryption and round trips
+- Vigenère encryption and decryption
+- repeated characters in Vigenère keywords
+- classical Vigenère key advancement over letters only
+- mixed-case input
+- punctuation preservation
+- CLI execution
+- English and Swedish alphabets
 
 ## Project lineage
 
@@ -50,7 +87,14 @@ The original project has been kept largely intact. Small fixes were made to rest
 - restored Vigenère CLI configuration
 - preserved repeated characters in Vigenère keywords
 - normalized English and Swedish cipher alphabets to uppercase
+- preserved letter case and punctuation in substitution ciphers
+- advanced the Vigenère key on letters only, matching the classical cipher
+- declared the project's runtime dependencies
 - added regression tests and a simple verification command
+
+## License
+
+MIT
 
 ## Status
 

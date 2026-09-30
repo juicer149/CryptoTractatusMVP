@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 
-from cipher.base import CipherBit
+from cipher.base import CipherBit, substitute
 from cipher.interfaces import CipherTable
 from utils.tools import filter_allowed_chars
 from utils.validators import ensure_not_empty
@@ -26,17 +26,32 @@ class Vigenere(CipherBit):
         )
         ensure_not_empty(self.keyword, "Keyword must not be empty")
 
-    def _transform(self, decrypt: bool) -> List[str]:
-        result = []
-        key = self.keyword
-        klen = len(key)
 
-        for i, char in enumerate(self.text):
-            key_char = key[i % klen]
+    def _transform(self, decrypt: bool) -> List[str]:
+        """Apply the keyword to letters only.
+
+        The key advances only on characters in the alphabet, so spaces and
+        punctuation pass through without consuming a key letter, as in the
+        classical Vigenère cipher.
+        """
+        alphabet = set(self.table.base_alphabet)
+        key = self.keyword
+        position = 0
+        result = []
+
+        for char in self.text:
+            if char.upper() not in alphabet:
+                result.append(char)
+                continue
+
+            key_char = key[position % len(key)]
+            position += 1
+
             cmap = self.table.get_map(key_char, decrypt=decrypt)
-            result.append(cmap.get(char, char))
+            result.append(substitute(char, cmap))
 
         return result
+
 
     def encrypt(self) -> List[str]:
         return self._transform(decrypt=False)
